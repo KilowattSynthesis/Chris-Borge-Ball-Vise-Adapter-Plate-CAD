@@ -1,0 +1,29 @@
+name: Lint Python Code
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Run ruff linter
+        run: ruff check .
+
+      - name: Run Python scripts in CAD folder
+        run: |
+          find cad -name "*.py" | while read file; do
+            echo "Running $file"
+            python "$file"
+          done

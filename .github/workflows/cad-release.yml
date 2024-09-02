@@ -1,0 +1,55 @@
+name: Lint, Run Scripts, and Publish Release on Tag
+
+on:
+  push:
+    tags:
+      - "v*"  # Only trigger on tags that start with "v"
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Run ruff linter
+        run: ruff check .
+
+      - name: Run Python scripts in CAD folder
+        run: |
+          find cad -name "*.py" | while read file; do
+            echo "Running $file"
+            python "$file"
+          done
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}  # Use the tag name from the push event
+          name: "Release ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
+
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh
+
+      - name: Upload build products to release
+        if: success()
+        run: |
+          for file in build/*; do
+            echo "Uploading $file"
+            gh release upload ${{ steps.create_release.outputs.upload_url }} "$file"
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
