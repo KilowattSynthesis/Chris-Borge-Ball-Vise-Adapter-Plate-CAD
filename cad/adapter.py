@@ -74,9 +74,10 @@ def make_adapter():
     return adapter
 
 
-adapter = make_adapter()
-show(adapter)
+if __name__ == "__main__":
+    adapter = make_adapter()
+    show(adapter)
 
-(export_folder := Path(__file__).with_name("build")).mkdir(exist_ok=True)
-adapter.part.export_stl(str(export_folder / "adapter.stl"))
-adapter.part.export_step(str(export_folder / "adapter.step"))
+    (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
+    adapter.part.export_stl(str(export_folder / "adapter.stl"))
+    adapter.part.export_step(str(export_folder / "adapter.step"))
