@@ -54,8 +54,11 @@ jobs:
         run: |
           echo "Uploading build products to release for ${{  github.ref_name }}"
           for file in build/*; do
-            echo "Uploading $file"
-            gh release upload ${{  github.ref_name }} "$file"
+            # New name: add the tag name to the file name right before the extension
+            new_file=$(echo $file | sed "s/\(.*\)\.\(.*\)/\1-${{  github.ref_name }}.\2/")
+            echo "Uploading $file as $new_file"
+            mv $file $new_file
+            gh release upload ${{  github.ref_name }} "$new_file"
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
