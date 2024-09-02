@@ -1,7 +1,7 @@
+import os
 from pathlib import Path
 
 import build123d as b123d
-from ocp_vscode import show
 
 big_od = 150
 hole_sep = 125
@@ -76,7 +76,12 @@ def make_adapter():
 
 if __name__ == "__main__":
     adapter = make_adapter()
-    show(adapter)
+
+    if not os.getenv("CI"):
+        from ocp_vscode import show
+
+        print("Showing CAD model(s)")
+        show(adapter)
 
     (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
     adapter.part.export_stl(str(export_folder / "adapter.stl"))
