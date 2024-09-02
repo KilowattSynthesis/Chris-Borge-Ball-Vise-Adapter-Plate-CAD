@@ -68,7 +68,12 @@ def make_adapter():
             adapter.faces().sort_by(b123d.Axis.Z)[0], mode=b123d.Mode.SUBTRACT
         ):
             with polar_locations:
-                b123d.RegularPolygon(radius=nut_flats_width / 2, side_count=6)
+                b123d.RegularPolygon(
+                    radius=nut_flats_width / 2,
+                    side_count=6,
+                    # For nuts, must set the width as the inscribed (minor) radius
+                    major_radius=False,
+                )
         b123d.extrude(amount=-nut_height, mode=b123d.Mode.SUBTRACT)
 
     return adapter
