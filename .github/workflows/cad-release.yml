@@ -24,6 +24,9 @@ jobs:
       - name: Run ruff linter
         run: ruff check .
 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Run Python scripts in CAD folder
         run: |
           find cad -name "*.py" | while read file; do
@@ -43,9 +46,6 @@ jobs:
 
       - name: Install GitHub CLI
         run: sudo apt-get install gh
-
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
 
       - name: Upload build products to release
         if: success()
